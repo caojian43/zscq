@@ -86,7 +86,7 @@ public class AdminController {
 	@RequestMapping(value="newhome",method=RequestMethod.GET)
 	public String newHome(Model model) {
 		model.addAttribute("home", new Home());
-		return "/admin/newhome";
+		return "zscq/admin/newhome";
 	}
 	
 	@RequestMapping(value="savehome",method=RequestMethod.POST)

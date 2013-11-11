@@ -20,9 +20,6 @@
                     
 <div class="btn-toolbar">
     <button class="btn btn-primary" id="submitBtn"><i class="icon-save"></i> Save</button>
-    <a href="#myModal" data-toggle="modal" class="btn">Delete</a>
-  <div class="btn-group">
-  </div>
 </div>
 <div class="well">
     <ul class="nav nav-tabs">
@@ -56,20 +53,6 @@
 
 </div>
 
-<div class="modal small hide fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-  <div class="modal-header">
-    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-    <h3 id="myModalLabel">Delete Confirmation</h3>
-  </div>
-  <div class="modal-body">
-    
-    <p class="error-text"><i class="icon-warning-sign modal-icon"></i>Are you sure you want to delete the user?</p>
-  </div>
-  <div class="modal-footer">
-    <button class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button>
-    <button class="btn btn-danger" data-dismiss="modal">Delete</button>
-  </div>
-</div>
 
 <script type="text/javascript">
 	$('#submitBtn').click(function(){
