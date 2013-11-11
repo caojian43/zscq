@@ -22,7 +22,7 @@
     <link rel="stylesheet" href="/static/datepicker/css/datepicker.css">
     <link rel="stylesheet" href="/static/datepicker/css/prettify.css">
 
-    <script src="/static/admin/lib/jquery-1.8.1.min.js" type="text/javascript"></script>
+    <script src="/static/admin/lib/jquery-1.9.1.min.js" type="text/javascript"></script>
     <script type="text/javascript" src="/static/simplepagination/jquery.simplePagination.js"></script>
 
     <!-- Demo page code -->
