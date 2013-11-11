@@ -1,0 +1,9 @@
+<html>
+
+<body>
+<p><b style="color:red;">${dto.username}</b>!!!!!Hello World!</p>
+
+<p>这是一封使用velocity 模板生成的邮件，测试专用！</p>
+
+</body>
+</html>

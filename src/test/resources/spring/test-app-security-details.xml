@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans:beans xmlns:beans="http://www.springframework.org/schema/beans"
+	xmlns="http://www.springframework.org/schema/security" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+           http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
+           http://www.springframework.org/schema/security
+           http://www.springframework.org/schema/security/spring-security-3.1.xsd">
+
+
+	<!-- 使用默认的编码器，默认的JdbcUserDetailsManager，可行。 -->
+	<jdbc-user-service id="userDetailsService"
+		data-source-ref="dataSource"
+		users-by-username-query="select username,password,enabled from users where username = ?"
+		authorities-by-username-query="select username,authority from authorities where username = ?"
+		cache-ref="userCache" />
+	
+	<!-- org.springframework.security.authentication.encoding.PasswordEncoder
+		default: PlaintextPasswordEncoder 纯文本密码格式 -->
+	<beans:bean id="passwordEncoder"
+		class="org.springframework.security.authentication.encoding.ShaPasswordEncoder">
+		<beans:constructor-arg value="256" />
+	</beans:bean>
+
+	<beans:bean id="digestFilter"
+		class="org.springframework.security.web.authentication.www.DigestAuthenticationFilter">
+		<beans:property name="userDetailsService" ref="userDetailsService" />
+		<beans:property name="authenticationEntryPoint" ref="digestEntryPoint" />
+	</beans:bean>
+
+	<beans:bean id="digestEntryPoint"
+		class="org.springframework.security.web.authentication.www.DigestAuthenticationEntryPoint">
+		<beans:property name="realmName" value="terrormovies-realm" />
+		<beans:property name="key" value="terrorific" />
+	</beans:bean>
+
+	<!-- <beans:bean id="userDetailsService"
+		class="org.springframework.security.provisioning.JdbcUserDetailsManager">
+	<beans:property name="dataSource" ref="dataSource" />
+	<beans:property name="userCache" ref="userCache" />
+	<beans:property name="authenticationManager" ref="authenticationManager" />
+	<beans:property name="createUserSql">
+		<beans:value>
+			insert into sys_users (name, password, status) values (?,?,?)
+		</beans:value>
+	</beans:property>
+	<beans:property name="deleteUserSql">
+		<beans:value>
+			delete from sys_users where name = ?
+		</beans:value>
+	</beans:property>
+	<beans:property name="updateUserSql">
+		<beans:value>
+			update sys_users set password = ?, status = ? where name = ?
+		</beans:value>
+	</beans:property>
+	<beans:property name="usersByUsernameQuery">
+		<beans:value> select name,password,status
+			from sys_users where status='1' and name = ?
+		</beans:value>
+	</beans:property>
+	<beans:property name="authoritiesByUsernameQuery">
+		<beans:value> select u.name,r.name
+			from sys_users u,sys_roles r,sys_users_roles ur where u.id=ur.user_id and
+			r.id=ur.role_id and u.status='1' and u.name=?
+		</beans:value>
+	</beans:property>
+</beans:bean> -->
+
+
+	<!-- security cache -->
+	<beans:bean id="securityCacheManager"
+		class="org.springframework.cache.ehcache.EhCacheManagerFactoryBean">
+		<beans:property name="configLocation">
+			<beans:value>classpath:spring/security-ehcache.xml</beans:value>
+		</beans:property>
+	</beans:bean>
+	<beans:bean name="userCache"
+		class="org.springframework.security.core.userdetails.cache.EhCacheBasedUserCache">
+		<beans:property name="cache">
+			<beans:bean class="org.springframework.cache.ehcache.EhCacheFactoryBean"
+				autowire="byName">
+				<beans:property name="cacheManager" ref="securityCacheManager" />
+				<beans:property name="cacheName" value="userCache" />
+			</beans:bean>
+		</beans:property>
+	</beans:bean>
+
+</beans:beans>

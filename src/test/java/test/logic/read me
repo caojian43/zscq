@@ -1,0 +1,18 @@
+逻辑单元测试，主要对controller 层，即我们的mvc representation layer，
+在该层找，controller 主要提供了用户界面和服务层之间的整合。
+	controller 类中的方法由HTTP请求映射。在方法体中，请求会得到处理，并绑定model 对象，
+通过依赖注入的service 对象与service layer 进行交互。交互一旦完成，controller根据
+结果来更新model 和视图状态并返回逻辑视图名称给mvc 来解析视图以渲染展示给用户。
+
+对controller 的测试主要目的是确保controller 方法能正确地更新model 以及视图状态并
+能返回正确的视图。除此之外，当出现错误时，测试确保正确的异常被抛出并且错误信息能保存以展示
+给用户。
+进行测试。
+
+需要的依赖：
+		<dependency>
+			<groupId>org.mockito</groupId>
+			<artifactId>mockito-core</artifactId>
+			<version>1.9.5</version>
+			<scope>test</scope>
+		</dependency>

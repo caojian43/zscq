@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:aop="http://www.springframework.org/schema/aop" xmlns:task="http://www.springframework.org/schema/task"
+	xmlns:jdbc="http://www.springframework.org/schema/jdbc"
+	xsi:schemaLocation="
+			http://www.springframework.org/schema/jdbc  
+      		http://www.springframework.org/schema/jdbc/spring-jdbc-3.2.xsd
+            http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
+            http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.2.xsd
+            http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.2.xsd
+            http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.2.xsd
+            http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task-3.2.xsd
+       ">
+	<!-- Annotation wiring isn't turned on in the Spring container by default, 
+		it helps you eliminate most uses of <property> and <constrcutor-arg> -->
+	<context:annotation-config />
+
+	<!-- @Scheduled or @Async 任务的驱动 -->
+	<task:annotation-driven />
+
+	<!-- 自动检索再该包下面所有的包含@Controller ,@Component ,@Service, @Repository 等的class并自动注册到context中来 -->
+	<context:component-scan
+		base-package="com.**.dao,com.**.bo,com.**.task" />
+
+	<!-- .properties 文件的加载 -->
+	<context:property-placeholder location="classpath*:/jdbc.properties" />
+	
+	<!-- fileupload servlet 3.0 + see more in docs
+		 MultipartFilter 会在Spring's root web applicationContext 查找该ResolverBean ，
+		 目前采用servlet 3.0 未实现-->
+	
+	<!-- <bean id="multipartResolver"
+    	class="org.springframework.web.multipart.support.StandardServletMultipartResolver">
+	</bean> -->
+	
+	<!-- fileupload -->
+	<bean id="multipartResolver"  class="org.springframework.web.multipart.commons.CommonsMultipartResolver">  
+    	<property name="maxUploadSize" value="157286400"/>
+	</bean>
+	
+<!-- ================JDBC Template============================== -->
+	<bean id="jdbcTemplate"
+ 		class="org.springframework.jdbc.core.JdbcTemplate ">
+		<constructor-arg ref="dataSource" />
+	</bean>
+	
+	<bean id="transactionManager_jdbc" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource" ref="dataSource"/>
+		<qualifier value="jdbc" ></qualifier>
+	</bean>
+	
+	<tx:annotation-driven transaction-manager="transactionManager_jdbc" />
+<!-- ================================================ -->
+
+
+	<!-- 需要了解Spring 提供的HibernateTemplate 的主要几个作用 ，sessions 与 exceptions -->
+	<!-- 针对未使用Spring 提供的Hibernate template classes ，而使用Hibernate 3 之后提供的contextual 
+		sessions ， 我们需要此bean来进行data access exception 的 translation 。同时我们的DAO需要使用Spring 
+		提供的 @Repository -->
+	<bean
+		class="org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor" />
+	
+	<!-- h2database 4 Test-->
+	
+	<jdbc:embedded-database id="dataSource" type="H2">
+		<jdbc:script location="classpath:schema.sql"/>
+		<jdbc:script location="classpath:test-data.sql"/>
+	</jdbc:embedded-database>
+	
+	<!-- <bean id="dataSource" destroy-method="close" init-method="init"
+		class="com.alibaba.druid.pool.DruidDataSource">
+
+		<property name="driverClassName" value="${jdbc.driverClassName}" />
+		<property name="url" value="${jdbc.url}" />
+		<property name="username" value="${jdbc.username}" />
+		<property name="password" value="${jdbc.password}" />
+
+		<property name="filters" value="stat" />
+
+		<property name="maxActive" value="20" />
+		<property name="initialSize" value="1" />
+		<property name="maxWait" value="60000" />
+		<property name="minIdle" value="1" />
+
+		<property name="timeBetweenEvictionRunsMillis" value="3000" />
+		<property name="minEvictableIdleTimeMillis" value="300000" />
+
+		<property name="validationQuery" value="SELECT 'x'" />
+		<property name="testWhileIdle" value="true" />
+		<property name="testOnBorrow" value="false" />
+		<property name="testOnReturn" value="false" />
+
+	</bean> -->
+	
+
+	<!-- 可供选择的另一个sessionFactory则是针对annotation的配置 AnnotationSessionFactoryBean，事实上， 
+		这边类继承自我们目前使用的sessionFactory -->
+	<bean id="sessionFactory"
+		class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
+		<property name="dataSource" ref="dataSource" />
+		<property name="packagesToScan" value="com.**.entity" />
+		<property name="hibernateProperties">
+			<props>
+				<prop key="hibernate.dialect">${hibernate.dialect}</prop>
+				<prop key="hibernate.cache.use_second_level_cache">${hibernate.cache.use_second_level_cache}</prop>
+				<prop key="hibernate.cache.use_query_cache">${hibernate.cache.use_query_cache}</prop>
+				<prop key="hibernate.cache.region.factory_class">${hibernate.cache.region.factory_class}</prop>
+				<prop key="hibernate.jdbc.fetch_size">${hibernate.jdbc.fetch_size}</prop>
+				<prop key="hibernate.jdbc.batch_size">${hibernate.jdbc.batch_size}</prop>
+				<prop key="hibernate.show_sql">${hibernate.show_sql}</prop>
+				<prop key="hibernate.search.worker.batch_size">500</prop>
+				<prop key="hibernate.search.default.directory_provider">${hibernate.search.default.directory_provider}</prop>
+				<prop key="hibernate.search.default.indexBase">${hibernate.search.default.indexBase}</prop>
+			</props>
+		</property>
+	</bean>
+	
+	<bean class="org.cj.dao.rdb.hibernate.impl.HibernateDaoImpl" id="hibernateDao">
+		<property name="sessionFactory" ref="sessionFactory" ></property>
+	</bean>
+	
+	<bean class="org.cj.search.hibernate.impl.HibernateSearchDaoImpl" id="hibernateSearchDao">
+		<property name="sessionFactory" ref="sessionFactory" ></property>
+	</bean>
+	
+	<bean class="org.cj.bo.impl.BaseHibernateBoImpl" id="baseBo" >
+		<property name="hibernateDao" ref="hibernateDao" ></property>
+	</bean>
+
+	<!-- @Transaction 事务驱动 取代tx:advice 声明式事务 ,default的transaction-manager 为: 
+		transactionManager ,因此我们不再设置,总之尽可能减少XML数目 -->
+	<tx:annotation-driven transaction-manager="transactionManager" />
+
+	<bean id="transactionManager"
+		class="org.springframework.orm.hibernate4.HibernateTransactionManager">
+		<qualifier value="hibernate" />
+		<property name="sessionFactory" ref="sessionFactory"></property>
+	</bean>
+
+	<!-- openSessionInView,support for hibernate4 since 3.1,load lazily,与web.xml中Filter的配置为二选一 -->
+	<!-- <bean id="openSessionInViewInterceptor"
+	class="org.springframework.orm.hibernate4.support.OpenSessionInViewInterceptor">
+	<property name="sessionFactory" ref="sessionFactory"></property>
+</bean>
+	<bean id="handlerMapping"
+		class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping">
+		<property name="interceptors">
+			<list>
+				<ref bean="openSessionInViewInterceptor" />
+			</list>
+		</property>
+	</bean> -->
+</beans>	

@@ -1,0 +1,34 @@
+<ehcache xsi:noNamespaceSchemaLocation="ehcache.xsd">
+	<diskStore path="java.io.tmpdir"/>
+	<defaultCache
+			maxElementsInMemory="1000"
+			eternal="false"
+			overflowToDisk="true"
+			timeToIdleSeconds="0"
+			timeToLiveSeconds="0"
+			diskPersistent="false"
+			diskExpiryThreadIntervalSeconds="120"/>
+
+	<cache name="loginUserNameCache"
+		   maxElementsInMemory="1000"
+		   eternal="false"
+		   overflowToDisk="true"
+		   timeToIdleSeconds="36000000"
+		   timeToLiveSeconds="36000000"
+		   diskPersistent="false"
+		   diskExpiryThreadIntervalSeconds="120"/>
+		   
+	<cache name="loginGrantedAuthorityCache"
+		   maxElementsInMemory="1000"
+		   eternal="false"
+		   overflowToDisk="true"
+		   timeToIdleSeconds="360000000"
+		   timeToLiveSeconds="360000000"
+		   diskPersistent="false"
+		   diskExpiryThreadIntervalSeconds="120"/>
+		   		   			
+	<cache name="userCache"
+		   maxElementsInMemory="10000"
+		   eternal="true"
+		   overflowToDisk="true"/>
+</ehcache>

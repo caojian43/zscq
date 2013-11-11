@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:mongo="http://www.springframework.org/schema/data/mongo"
+	xsi:schemaLocation="http://www.springframework.org/schema/data/mongo
+          http://www.springframework.org/schema/data/mongo/spring-mongo.xsd
+          http://www.springframework.org/schema/beans
+          http://www.springframework.org/schema/beans/spring-beans.xsd">
+	
+	<!-- Default bean name is 'mongo' ，定义访问mongodb 的Mongo实例,
+		可以定义副本机器-->
+	<mongo:mongo host="localhost" port="27017" />
+	
+	<!-- allow  @Version 不是jpa-->
+	<mongo:auditing/> 
+	
+	<!-- 连接“指定”数据库的mongodb 工厂 -->
+	<mongo:db-factory id="mongoDbFactory" dbname="mongodb" mongo-ref="mongo"  />
+	
+	<bean class="org.springframework.data.mongodb.core.MongoExceptionTranslator"/>
+	
+	<!-- MongoTemplate 有多种不同的构造器，我们可以有选择得为构造器灌入参数 -->
+	<bean id="mongoTemplate" class="org.springframework.data.mongodb.core.MongoTemplate">
+		<constructor-arg ref="mongo"/>
+    	<constructor-arg name="databaseName" value="mongodb"/>
+    	<property name="writeConcern" value="SAFE" />
+	</bean>
+	
+	<!-- 该命名空间会自动扫描命名包下继承 MongoRepository接口的接口-->
+	<mongo:repositories base-package="com.dx.*.repositories" />
+	
+</beans>
