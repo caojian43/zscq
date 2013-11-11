@@ -70,16 +70,35 @@ public class AdminController {
 	}
 	
 	@RequestMapping(value="home/{id}",method=RequestMethod.GET)
-	public String editPic(Model model,@PathVariable("id")Long id) {
+	public String home(Model model,@PathVariable("id")Long id) {
 		
 		Home h = baseBo.loadById(Home.class, id);
 		model.addAttribute("home", h);
-		return "zscq/admin/pic";
+		return "zscq/admin/edithome";
+	}
+	
+	@RequestMapping(value="edithome",method=RequestMethod.POST)
+	public String editHome(@ModelAttribute("home")Home home) {
+		baseBo.update(home);
+		return "redirect:/admin/home";
+	}
+	
+	@RequestMapping(value="newhome",method=RequestMethod.GET)
+	public String newHome(Model model) {
+		model.addAttribute("home", new Home());
+		return "/admin/newhome";
 	}
 	
 	@RequestMapping(value="savehome",method=RequestMethod.POST)
-	public String savehome(@ModelAttribute("home")Home home) {
-		baseBo.update(home);
+	public String saveHome(@ModelAttribute("home")Home home) {
+		baseBo.save(home);
+		return "redirect:/admin/home";
+	}
+	
+	@RequestMapping(value="deletehome/{id}",method=RequestMethod.DELETE)
+	public String deleteHome(@PathVariable("id")Long id) {
+		
+		baseBo.delete(Home.class, id);
 		return "redirect:/admin/home";
 	}
 	
