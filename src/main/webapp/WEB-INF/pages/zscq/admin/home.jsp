@@ -60,7 +60,7 @@
               			${home.srcPic }
               		</td>
               		<td style="text-align: right;">
-              		<a href="editPic/${home.id}"><i class="icon-pencil"></i></a>
+              		<a href="home/${home.id}"><i class="icon-pencil"></i></a>
               		<a href="#myModal" role="button" data-toggle="modal"><i class="icon-remove"></i></a>
               		
               		</td>
