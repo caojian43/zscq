@@ -30,7 +30,7 @@
     </ul>
     <div id="myTabContent" class="tab-content">
       <div class="tab-pane active in" id="home">
-     <form:form id="frm1" enctype="multipart/form-data" modelAttribute="team" name="frm1" action="/admin/mem" method="post">
+     <form:form id="frm1" enctype="multipart/form-data" modelAttribute="team" name="frm1" action="/admin/savemem" method="post">
     	<input type="hidden" name="id" value="10">
         <label>姓名</label>
         <form:input path="name" class="input-xlarge"/>

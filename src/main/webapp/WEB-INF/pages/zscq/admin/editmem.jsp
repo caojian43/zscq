@@ -31,7 +31,7 @@
     </ul>
     <div id="myTabContent" class="tab-content">
       <div class="tab-pane active in" id="home">
-     <form:form id="frm1" name="frm1" action="/admin/mem" enctype="multipart/form-data" modelAttribute="mem" method="put">
+     <form:form id="frm1" name="frm1" action="/admin/editmem" enctype="multipart/form-data" modelAttribute="mem" method="put">
     	<form:hidden path="id"/>
         <label>姓名</label>
         <form:input path="name" class="input-xlarge"/>

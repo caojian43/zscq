@@ -57,7 +57,7 @@ public class AdminController {
 	@Resource(name="baseBo")
 	private BaseHibernateBo baseBo;
 	
-	@RequestMapping("home")
+	@RequestMapping(value="home",method=RequestMethod.GET)
 	public String home(Model model) {
 		// 获取 UserDetails a test
 		UserDetails user = (UserDetails) SecurityContextHolder.getContext()
@@ -69,7 +69,7 @@ public class AdminController {
 		return "zscq/admin/home";
 	}
 	
-	@RequestMapping("editPic/{id}")
+	@RequestMapping(value="home/{id}",method=RequestMethod.GET)
 	public String editPic(Model model,@PathVariable("id")Long id) {
 		
 		Home h = baseBo.loadById(Home.class, id);
@@ -77,13 +77,13 @@ public class AdminController {
 		return "zscq/admin/pic";
 	}
 	
-	@RequestMapping("save")
-	public String save(@ModelAttribute("home")Home home) {
+	@RequestMapping(value="savehome",method=RequestMethod.POST)
+	public String savehome(@ModelAttribute("home")Home home) {
 		baseBo.update(home);
 		return "redirect:/admin/home";
 	}
 	
-	@RequestMapping("user")
+	@RequestMapping(value="user")
 	public String user(Model model) {
 //		List<String> users = baseBo.getUserInfoByJDBC();
 //		model.addAttribute("users", users);
@@ -105,7 +105,7 @@ public class AdminController {
 		List<TeamMember> list = baseBo.
 				find("from TeamMember order by rank asc",true); 
 		model.addAttribute("list", list);
-		return "zscq/admin/team";
+		return "zscq/admin/teamlist";
 	}
 	
 	/**
@@ -130,7 +130,7 @@ public class AdminController {
 	 * @param result
 	 * @return
 	 */
-	@RequestMapping(value="mem", method=RequestMethod.PUT)
+	@RequestMapping(value="editmem", method=RequestMethod.PUT)
 	public String editMem(Model model, @Valid @ModelAttribute("team")TeamMember mem,
 			BindingResult result, RedirectAttributes redirect) {
 		if(result.hasErrors()){
@@ -139,7 +139,7 @@ public class AdminController {
 				log.info(e);
 			}
 			model.addAttribute("mem", mem);
-			return "zscq/admin/mem";
+			return "zscq/admin/editmem";
 		}
 		baseBo.update(mem);
 		redirect.addFlashAttribute("msg", "success");
@@ -159,8 +159,8 @@ public class AdminController {
 	 * @param result
 	 * @return
 	 */
-	@RequestMapping(value="mem", method=RequestMethod.POST)
-	public String newMem(Model model, @Valid @ModelAttribute("team")TeamMember mem,
+	@RequestMapping(value="savemem", method=RequestMethod.POST)
+	public String saveMem(Model model, @Valid @ModelAttribute("team")TeamMember mem,
 			BindingResult result, RedirectAttributes redirect,
 			@RequestParam(value="file" ,required=false) MultipartFile file) {
 		if(result.hasErrors()){
@@ -181,7 +181,7 @@ public class AdminController {
 	
 	@RequestMapping("deletemem/{id}")
 	@ResponseStatus(value=HttpStatus.NO_CONTENT)
-	public void deleteMem(@PathVariable("id")Long id) {
+	public String deleteMem(@PathVariable("id")Long id) {
 		
 		try {
 			baseBo.executeHql("delete from TeamMember where id=:id", 
@@ -189,7 +189,7 @@ public class AdminController {
 		} catch (Exception e) {
 			log.error("实体删除失败，可能是由于重复删除导致！");
 		}
-		
+		return "redirect:/admin/teamlist";
 	}
 	
 	@RequestMapping("lawservice")
